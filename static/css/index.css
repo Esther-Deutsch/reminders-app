@@ -1,0 +1,8 @@
+*{
+   color : blue;
+   text-align : left;
+}
+
+tr, th{
+    padding : 1rem;
+}

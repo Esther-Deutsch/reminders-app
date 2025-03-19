@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>update</title>
+{% endblock %}
+
+
+{% block body %}
+     <h3>update reminder</h3>
+     <form action="/update/{{remind.id}}" method="POST">
+         <input id="toDo" name="toDo" type="text" placeholder="to do" value="{{remind.todo}}"/>
+         <input id="date" name="date" type="date" placeholder="enter date" value="{{remind.date}}"/>
+         <input id="hour" name="hour" type="time" placeholder="time" value="{{remind.hour}}"/>
+         <span>re remind</span>
+         <input id="reRemind" name="reRemind" type="checkbox" placeholder="re remind" value="{{remind.reRemind}}"/>
+         <button>Add</button>
+     </form>
+{% endblock %}
+

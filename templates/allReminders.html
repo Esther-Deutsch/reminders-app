@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+    {% block head %}
+      <title>Reminders</title>
+    {% endblock %}
+
+    {% block body %}
+        <h3>all my reminders</h3>
+    {% if reminders|length < 1 %}
+            <h4>you don't have any reminders. create one!</h4>
+    {% else %}
+            <table>
+                <tr>
+                    <th>what to do</th>
+                    <th>date</th>
+                    <th>hour</th>
+                    <th>re remind</th>
+                </tr>
+           {% for r in reminders: %}
+                    <tr>
+                        <th>{{r.todo}}</th>
+<!--                        <th>{{r.date.strftime('%Y-%m-%d') }}</th>-->
+                        <th>{{r.hour.strftime('%H:%M') }}</th>
+                        <th>{{r.date.date() }}</th>
+                        <th>{{r.reRemind}}</th>
+                        <th>
+                            <a href="/delete/{{r.id}}">delete</a>
+                            <a href="/update/{{r.id}}">update</a>
+                        </th>
+                    </tr>
+          {% endfor %}
+            </table>
+    {% endif %}
+        <h3>add a new reminder</h3>
+        <form action="/" method="post">
+            <input id="toDo" name="toDo" type="text" placeholder="to do"/>
+            <input id="date" name="date" type="date" placeholder="enter date"/>
+            <input id="hour" name="hour" type="time" placeholder="time"/>
+            <span>re remind</span>
+            <input id="reRemind" name="reRemind" type="checkbox" placeholder="re remind"/>
+            <button>Add</button>
+        </form>
+
+    {% endblock %}
