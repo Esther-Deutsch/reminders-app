@@ -12,7 +12,7 @@
          <input id="date" name="date" type="date" placeholder="enter date" value="{{remind.date}}"/>
          <input id="hour" name="hour" type="time" placeholder="time" value="{{remind.hour}}"/>
          <span>re remind</span>
-         <input id="reRemind" name="reRemind" type="checkbox" placeholder="re remind" value="{{remind.reRemind}}"/>
+         <input id="reRemind" name="reRemind" type="checkbox" value="on" {% if remind.reRemind %}checked{% endif %} placeholder="re remind" value="{{remind.reRemind}}"/>
          <button>Add</button>
      </form>
 {% endblock %}

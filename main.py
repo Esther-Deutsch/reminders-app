@@ -54,36 +54,41 @@ def getAll():
 # פונקציה למחיקת תזכורת
 @app.route("/delete/<int:id>")
 def delete(id):
-    for r in reminders:
-        if r["id"] == id:
-            reminders.remove(r)
-            break
+    delete_reminder = Reminder.query.get_or_404(id)
+    db.session.delete(delete_reminder)
+    db.session.commit()
     return redirect("/")
 
 # פונקציה לעדכון תזכורת
 @app.route("/update/<int:id>", methods=["GET", "POST"])
 def update(id):
     if request.method == "GET":
-        for r in reminders:
-            if r["id"] == id:
-                reminder = r
-                break
-        return render_template("update.html", remind=reminder)
+        update_reminder = Reminder.query.get_or_404(id)
+        return render_template("update.html", remind=update_reminder)
     else:
+        
+        # התזכורת שנרצה לעדכן
+        update_reminder = Reminder.query.get_or_404(id)
+        
+        # שליפת הנתונים מהטופס
         to_do = request.form['toDo']
         date_str = request.form['date']
         hour_str = request.form['hour']
-        re_remind = True if request.form.get('reRemind') == 'on' else False
+        re_remind = request.form.get('reRemind') == 'on'
 
-        # convert the date and hour to dateTime and time
-        date = datetime.strptime(date_str, '%Y-%m-%d')
-        hour = datetime.strptime(hour_str, '%H:%M').time()
-        for r in reminders:
-            if r["id"] == id:
-                r["todo"] = to_do
-                r["date"] = date
-                r["hour"] = hour
-                r["reRemind"] = re_remind
+        # המרה של התאריך ושעה אם קיבל
+        # במידה ולא קיבל הצבה של התאריך והשעה הישנים        
+        date = datetime.strptime(date_str, '%Y-%m-%d') if date_str else update_reminder.date
+        hour = datetime.strptime(hour_str, '%H:%M').time() if hour_str else update_reminder.hour
+        
+        # עדכון התזכורת
+        update_reminder.todo = to_do
+        update_reminder.date = date
+        update_reminder.hour = hour
+        update_reminder.reRemind = re_remind
+        
+        #עדכון בדאטה בייס
+        db.session.commit()
         return redirect("/")
 
 # מחזיר תזכורת לפי id שמקבל בניתוב
