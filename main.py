@@ -22,7 +22,7 @@ class Reminder(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     todo = db.Column(db.String)#, Nullable = False)
     date = db.Column(db.DateTime, default = datetime.now())
-    hour = db.Column(db.Integer, default = datetime.now().time())
+    hour = db.Column(db.Time, default = datetime.now().time())
     reRemind = db.Column(db.Boolean, default = False)
 
 with app.app_context():
@@ -33,7 +33,8 @@ with app.app_context():
 @app.route("/", methods=["GET", "POST"])
 def getAll():
     if request.method == "GET":
-        return render_template("allReminders.html", reminders= reminders)
+        data = Reminder.query.filter_by().all()
+        return render_template("allReminders.html", reminders= data)
     else:
         to_do = request.form['toDo']
         date_str = request.form['date']
@@ -41,11 +42,13 @@ def getAll():
         re_remind = True if request.form.get('reRemind') == 'on' else False
 
         #convert the date and hour to dateTime and time
-        date = datetime.strptime(date_str, '%Y-%m-%d')
-        hour = datetime.strptime(hour_str, '%H:%M').time()
+        #if the date or hour is empty, it will take the current date and time
+        date = datetime.strptime(date_str, '%Y-%m-%d') if date_str else datetime.now()
+        hour = datetime.strptime(hour_str, '%H:%M').time() if hour_str else datetime.now().time()
 
-        new_reminder = {"id": reminders[-1]["id"]+1, "todo": to_do, "date": date, "hour": hour, "reRemind": re_remind}
-        reminders.append(new_reminder)
+        add_reminder = Reminder(todo = to_do, date = date, hour = hour, reRemind = re_remind)
+        db.session.add(add_reminder)
+        db.session.commit()
         return redirect("/")
 
 # פונקציה למחיקת תזכורת
